@@ -41,7 +41,7 @@ function makeNewQuestion(){
 
     const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
 
-    fetch('https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple', {
+    fetch(apiUrl, {
         method: 'get'
     })
     .then(response => response.json())
@@ -120,7 +120,7 @@ function showScore() {
 }
 
 nextButton.addEventListener("click", () => {
-    if (currentQuestionIndex < 10) {
+    if (currentQuestionIndex < question.length) {
         handleNextButton();
     } else {
         startQuiz();
