@@ -1,4 +1,6 @@
-const questions = [
+
+
+/**const question = [
     {
         question: "Which is the largest animal in the world?",
         answers: [
@@ -7,14 +9,17 @@ const questions = [
             { text: "Elephant", correct: false },
             { text: "Giraffe", correct: false },
         ]
-    },
+    }
+];**/
+
+const question = [
     {
-        question: "Which is the largest desert in the world?",
+        question: "Which is the largest animal in the world?",
         answers: [
-            { text: "Kalahari", correct: false },
-            { text: "Gobi", correct: false },
-            { text: "Sahara", correct: false },
-            { text: "Antarctica", correct: true },
+            { text: "Shark", correct: false },
+            { text: "Blue whale", correct: true },
+            { text: "Elephant", correct: false },
+            { text: "Giraffe", correct: false },
         ]
     }
 ];
@@ -32,9 +37,34 @@ function startQuiz() {
     nextButton.innerHTML = "Next";
     showQuestion();
 }
+function makeNewQuestion(){
+
+    const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
+
+    $.ajax({
+        url: apiUrl,
+        method: 'GET',
+        success: function(data) {
+            console.log(data);
+            $('#api-data').text(JSON.stringify(data, null, 2));
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+
+    for (const apiUrl in object) {
+        console.log(`${apiUrl}: ${obj[apiUrl]}`);
+    }
+
+
+}
 
 function showQuestion() {
     resetState();
+
+    makeNewQuestion();
+
     let currentQuestion = questions[currentQuestionIndex];
     let questionNo = currentQuestionIndex + 1; // Fixed index calculation
     questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
@@ -94,7 +124,7 @@ function showScore() {
 }
 
 nextButton.addEventListener("click", () => {
-    if (currentQuestionIndex < questions.length) {
+    if (currentQuestionIndex < 10) {
         handleNextButton();
     } else {
         startQuiz();
@@ -102,3 +132,4 @@ nextButton.addEventListener("click", () => {
 });
 
 startQuiz();
+
