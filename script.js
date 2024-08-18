@@ -41,17 +41,13 @@ function makeNewQuestion(){
 
     const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
 
-    $.ajax({
-        url: apiUrl,
-        method: 'GET',
-        success: function(data) {
-            console.log(data);
-            $('#api-data').text(JSON.stringify(data, null, 2));
-        },
-        error: function(error) {
-            console.error('Error:', error);
-        }
-    });
+    fetch('https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple', {
+        method: 'get'
+    })
+    .then(response => response.json())
+    .then(jsonData => console.log(jsonData))
+    .catch(err => console.log(err));
+
 
     for (const apiUrl in object) {
         console.log(`${apiUrl}: ${obj[apiUrl]}`);
