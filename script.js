@@ -50,13 +50,8 @@ function showQuestion() {
 
     makeNewQuestion();
 
-<<<<<<< Updated upstream
-    let currentQuestion = questions[currentQuestionIndex];
-    let questionNo = currentQuestionIndex + 1;
-=======
     let currentQuestion = question[currentQuestionIndex];
     let questionNo = currentQuestionIndex + 1; // Fixed index calculation
->>>>>>> Stashed changes
     questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
 
     currentQuestion.answers.forEach(answer => {
