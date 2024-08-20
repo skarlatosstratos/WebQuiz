@@ -12,18 +12,6 @@
     }
 ];**/
 
-const question = [
-    {
-        question: "Which is the largest animal in the world?",
-        answers: [
-            { text: "Shark", correct: false },
-            { text: "Blue whale", correct: true },
-            { text: "Elephant", correct: false },
-            { text: "Giraffe", correct: false },
-        ]
-    }
-];
-
 const questionElement = document.getElementById("question");
 const answerButtons = document.getElementById("answer-buttons");
 const nextButton = document.getElementById("next-btn");
@@ -37,6 +25,7 @@ function startQuiz() {
     nextButton.innerHTML = "Next";
     showQuestion();
 }
+
 function makeNewQuestion(){
 
     const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
@@ -62,7 +51,7 @@ function showQuestion() {
     makeNewQuestion();
 
     let currentQuestion = questions[currentQuestionIndex];
-    let questionNo = currentQuestionIndex + 1; // Fixed index calculation
+    let questionNo = currentQuestionIndex + 1;
     questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
 
     currentQuestion.answers.forEach(answer => {
