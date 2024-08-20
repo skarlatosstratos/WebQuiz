@@ -26,47 +26,45 @@ function startQuiz() {
     nextButton.innerHTML = "Next";
     showQuestion();
 }
-function makeNewQuestion(){
+async function makeNewQuestion(){
 
     const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
 
-const fetchQuestion = async () => {
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-        return data;
+        return data.results; // Return the results array directly
     } catch (error) {
         console.error("Error fetching data:", error);
     }
-};
-
-fetchQuestion().then(data => {
-    const results = data.results;
-
-    results.forEach(item => {
-        console.log(`Question: ${item.question}`);
-        console.log(`Correct answer: ${item.correct_answer}`);
-        
-        item.incorrect_answers.forEach((incorrectAnswer, index) => {
-            console.log(`Incorrect answer ${index + 1}: ${incorrectAnswer}`);
-        });
-
-    });
-
-    
-});
-
-return results;
-    
-
+   
 }
 
 function showQuestion() {
-    resetState();
+    //resetState();
 
-    const results = makeNewQuestion();
-    console.log(results);
 
+    (async () => {
+        const results = await makeNewQuestion(); // Wait for the function to resolve
+        console.log(results); // Log the results
+    
+        // Optional: log each question and answer
+        results.forEach(item => {
+            console.log(`Question: ${item.question}`);
+            console.log(`Correct answer: ${item.correct_answer}`);
+            
+            item.incorrect_answers.forEach((incorrectAnswer, index) => {
+                console.log(`Incorrect answer ${index + 1}: ${incorrectAnswer}`);
+            });
+        });
+    })();
+
+
+
+    
+
+
+    //
     let currentQuestion = question;
     
     let questionNo = currentQuestionIndex + 1; // Fixed index calculation
