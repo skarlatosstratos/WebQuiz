@@ -30,11 +30,12 @@ function makeNewQuestion(){
     const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
 
     const obj = () => {
-        const response = fetch('https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple');
+        const response = fetch(apiUrl);
         return response.json()
-      }
+        console.log(response.json);
+    }
       
-      
+    
 
 }
 
@@ -43,13 +44,14 @@ function showQuestion() {
 
     makeNewQuestion();
 
-    /**let currentQuestion = question;
+    let currentQuestion = question;
     
     let questionNo = currentQuestionIndex + 1; // Fixed index calculation
-    **/
+    
 
     questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
 
+    /** 
     currentQuestion.answers.forEach(answer => {
         const button = document.createElement("button");
         button.innerHTML = answer.text;
@@ -61,6 +63,7 @@ function showQuestion() {
 
         button.addEventListener("click", selectAnswer);
     });
+    */
 }
 
 function resetState() {
