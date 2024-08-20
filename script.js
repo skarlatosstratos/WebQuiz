@@ -1,5 +1,3 @@
-
-
 let question = [
     {
         questionText: "",
@@ -11,7 +9,6 @@ let question = [
         ]
     }
 ];
-
 
 const questionElement = document.getElementById("question");
 const answerButtons = document.getElementById("answer-buttons");
@@ -26,32 +23,58 @@ function startQuiz() {
     nextButton.innerHTML = "Next";
     showQuestion();
 }
-async function makeNewQuestion(){
 
+async function fetchQuestionData() {
     const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
-
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-        return data.results; // Return the results array directly
+        return data;
     } catch (error) {
         console.error("Error fetching data:", error);
     }
-   
 }
 
-function showQuestion() {
-    //resetState();
-    handleQuestionData();
-    //
-    let currentQuestion = question;
-    
-    let questionNo = currentQuestionIndex + 1; // Fixed index calculation
-    
+async function handleQuestionData() {
+    const response = await fetchQuestionData();
 
-    questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
+    // Check if the response and results array are valid
+    if (!response || !response.results || response.results.length === 0) {
+        console.error("No results returned from API");
+        return; // Exit the function if no results
+    }
 
-    /** 
+    const result = response.results[0];
+    const correctAnswer = result.correct_answer;
+    const incorrectAnswers = result.incorrect_answers;
+
+    // Update global question object
+    question[0].questionText = result.question;
+
+    // Insert the correct answer
+    question[0].answers[0].text = correctAnswer;
+    question[0].answers[0].correct = true;
+
+    // Insert the incorrect answers
+    for (let i = 0; i < incorrectAnswers.length; i++) {
+        question[0].answers[i + 1].text = incorrectAnswers[i];
+        question[0].answers[i + 1].correct = false;
+    }
+
+    shuffle(question[0].answers); // Shuffle answers for randomness
+}
+
+async function showQuestion() {
+    resetState();
+    await handleQuestionData(); // Wait for the question data to be fetched
+
+    // Display the question and answers
+    let currentQuestion = question[0];
+    
+    let questionNo = currentQuestionIndex + 1;
+    questionElement.innerHTML = questionNo + ". " + currentQuestion.questionText;
+
+    // Create buttons for the answers
     currentQuestion.answers.forEach(answer => {
         const button = document.createElement("button");
         button.innerHTML = answer.text;
@@ -63,7 +86,6 @@ function showQuestion() {
 
         button.addEventListener("click", selectAnswer);
     });
-    */
 }
 
 function resetState() {
@@ -80,7 +102,7 @@ function selectAnswer(e) {
         selectedBtn.classList.add("correct");
         score++;
     } else {
-        selectedBtn.classList.add("wrong"); // Use "wrong" class for wrong answer
+        selectedBtn.classList.add("wrong");
     }
     Array.from(answerButtons.children).forEach(button => {
         if (button.dataset.correct === "true") {
@@ -93,7 +115,7 @@ function selectAnswer(e) {
 
 function handleNextButton() {
     currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
+    if (currentQuestionIndex < 10) { // Assuming 10 questions
         showQuestion();
     } else {
         showScore();
@@ -102,74 +124,25 @@ function handleNextButton() {
 
 function showScore() {
     resetState();
-    questionElement.innerHTML = `You scored ${score} out of ${questions.length}!`;
+    questionElement.innerHTML = `You scored ${score} out of 10!`;
     nextButton.innerHTML = "Play Again";
     nextButton.style.display = "block";
 }
 
 nextButton.addEventListener("click", () => {
-    if (currentQuestionIndex < question.length) {
+    if (currentQuestionIndex < 10) {
         handleNextButton();
     } else {
         startQuiz();
     }
 });
 
-startQuiz();
-
-async function fetchQuestionData() {
-    // Example: Fetching data from an API
-    const response = await fetch('https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple');
-    const data = await response.json();
-    return data;
-}
-
-async function handleQuestionData() {
-    // Await the asynchronous fetch operation
-    const response = await fetchQuestionData();
-
-    // Define your question object
-    let question = [
-        {
-            questionText: "",
-            answers: [
-                { text: "", correct: true },
-                { text: "", correct: false },
-                { text: "", correct: false },
-                { text: "", correct: false },
-            ]
-        }
-    ];
-
-    // Extract the relevant data from the response
-    const result = response.results[0];
-    const correctAnswer = result.correct_answer;
-    const incorrectAnswers = result.incorrect_answers;
-
-    // Insert the question text
-    question[0].questionText = result.question;
-
-    // Insert the correct answer
-    question[0].answers[0].text = correctAnswer;
-    question[0].answers[0].correct = true; // Correct flag is already true
-
-    // Insert the incorrect answers
-    for (let i = 0; i < incorrectAnswers.length; i++) {
-        question[0].answers[i + 1].text = incorrectAnswers[i];
-        question[0].answers[i + 1].correct = false;
-    }
-    console.log(JSON.stringify(question, null, 2));
-    shuffle(question[0].answers);
-    // Log the updated question object
-    console.log(JSON.stringify(question, null, 2));
-}
-
-// Call the function to execute
+// Utility function to shuffle answers
 function shuffle(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
 }
+
+startQuiz();
