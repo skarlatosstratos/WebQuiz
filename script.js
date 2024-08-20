@@ -25,23 +25,16 @@ function startQuiz() {
     nextButton.innerHTML = "Next";
     showQuestion();
 }
-
 function makeNewQuestion(){
 
     const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
 
-    fetch(apiUrl, {
-        method: 'get'
-    })
-    .then(response => response.json())
-    .then(jsonData => console.log(jsonData))
-    .catch(err => console.log(err));
-
-
-    for (const apiUrl in object) {
-        console.log(`${apiUrl}: ${obj[apiUrl]}`);
-    }
-
+    const obj = () => {
+        const response = fetch('https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple');
+        return response.json()
+      }
+      
+      
 
 }
 
@@ -50,13 +43,11 @@ function showQuestion() {
 
     makeNewQuestion();
 
-<<<<<<< Updated upstream
-    let currentQuestion = questions[currentQuestionIndex];
-    let questionNo = currentQuestionIndex + 1;
-=======
-    let currentQuestion = question[currentQuestionIndex];
+    /**let currentQuestion = question;
+    
     let questionNo = currentQuestionIndex + 1; // Fixed index calculation
->>>>>>> Stashed changes
+    **/
+
     questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
 
     currentQuestion.answers.forEach(answer => {
