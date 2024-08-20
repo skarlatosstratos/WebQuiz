@@ -158,9 +158,18 @@ async function handleQuestionData() {
         question[0].answers[i + 1].text = incorrectAnswers[i];
         question[0].answers[i + 1].correct = false;
     }
-
+    console.log(JSON.stringify(question, null, 2));
+    shuffle(question[0].answers);
     // Log the updated question object
     console.log(JSON.stringify(question, null, 2));
 }
 
 // Call the function to execute
+function shuffle(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
