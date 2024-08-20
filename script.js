@@ -12,6 +12,7 @@
     }
 ];**/
 
+
 const questionElement = document.getElementById("question");
 const answerButtons = document.getElementById("answer-buttons");
 const nextButton = document.getElementById("next-btn");
@@ -49,9 +50,13 @@ fetchQuestion().then(data => {
         item.incorrect_answers.forEach((incorrectAnswer, index) => {
             console.log(`Incorrect answer ${index + 1}: ${incorrectAnswer}`);
         });
+
     });
+
+    
 });
 
+return results;
     
 
 }
@@ -59,7 +64,8 @@ fetchQuestion().then(data => {
 function showQuestion() {
     resetState();
 
-    makeNewQuestion();
+    const results = makeNewQuestion();
+    console.log(results);
 
     let currentQuestion = question;
     
