@@ -29,12 +29,29 @@ function makeNewQuestion(){
 
     const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
 
-    const obj = () => {
-        const response = fetch(apiUrl);
-        return response.json()
-        console.log(response.json);
+const fetchQuestion = async () => {
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
     }
-      
+};
+
+fetchQuestion().then(data => {
+    const results = data.results;
+
+    results.forEach(item => {
+        console.log(`Question: ${item.question}`);
+        console.log(`Correct answer: ${item.correct_answer}`);
+        
+        item.incorrect_answers.forEach((incorrectAnswer, index) => {
+            console.log(`Incorrect answer ${index + 1}: ${incorrectAnswer}`);
+        });
+    });
+});
+
     
 
 }
