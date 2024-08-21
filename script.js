@@ -1,81 +1,47 @@
-let question = [
-    {
-        questionText: "",
-        answers: [
-            { text: "", correct: true },
-            { text: "", correct: false },
-            { text: "", correct: false },
-            { text: "", correct: false },
-        ]
-    }
-];
+let questions = [];
+let currentQuestionIndex = 0;
+let score = 0;
 
 const questionElement = document.getElementById("question");
 const answerButtons = document.getElementById("answer-buttons");
 const nextButton = document.getElementById("next-btn");
 
-let currentQuestionIndex = 0;
-let score = 0;
-
 function startQuiz() {
     currentQuestionIndex = 0;
     score = 0;
     nextButton.innerHTML = "Next";
-    showQuestion();
+    fetchQuestions();
 }
 
-async function fetchQuestionData() {
-    const apiUrl = 'https://opentdb.com/api.php?amount=1&category=21&difficulty=easy&type=multiple';
+async function fetchQuestions() {
+    const apiUrl = 'https://opentdb.com/api.php?amount=10&type=multiple';
+
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-        return data;
+        questions = data.results;
+        showQuestion();
     } catch (error) {
         console.error("Error fetching data:", error);
     }
 }
 
-async function handleQuestionData() {
-    const response = await fetchQuestionData();
-
-    // Check if the response and results array are valid
-    if (!response || !response.results || response.results.length === 0) {
-        console.error("No results returned from API");
-        return; // Exit the function if no results
-    }
-
-    const result = response.results[0];
-    const correctAnswer = result.correct_answer;
-    const incorrectAnswers = result.incorrect_answers;
-
-    // Update global question object
-    question[0].questionText = result.question;
-
-    // Insert the correct answer
-    question[0].answers[0].text = correctAnswer;
-    question[0].answers[0].correct = true;
-
-    // Insert the incorrect answers
-    for (let i = 0; i < incorrectAnswers.length; i++) {
-        question[0].answers[i + 1].text = incorrectAnswers[i];
-        question[0].answers[i + 1].correct = false;
-    }
-
-    shuffle(question[0].answers); // Shuffle answers for randomness
-}
-
-async function showQuestion() {
+function showQuestion() {
     resetState();
-    await handleQuestionData(); // Wait for the question data to be fetched
 
-    // Display the question and answers
-    let currentQuestion = question[0];
-    
+    const currentQuestion = questions[currentQuestionIndex];
+
     let questionNo = currentQuestionIndex + 1;
-    questionElement.innerHTML = questionNo + ". " + currentQuestion.questionText;
+    questionElement.innerHTML = `${questionNo}. ${currentQuestion.question}`;
 
-    // Create buttons for the answers
-    currentQuestion.answers.forEach(answer => {
+    const answers = [
+        { text: currentQuestion.correct_answer, correct: true },
+        ...currentQuestion.incorrect_answers.map(answer => ({ text: answer, correct: false }))
+    ];
+
+    shuffle(answers);
+
+    answers.forEach(answer => {
         const button = document.createElement("button");
         button.innerHTML = answer.text;
         button.classList.add("btn");
@@ -98,24 +64,27 @@ function resetState() {
 function selectAnswer(e) {
     const selectedBtn = e.target;
     const isCorrect = selectedBtn.dataset.correct === "true";
+
     if (isCorrect) {
         selectedBtn.classList.add("correct");
         score++;
     } else {
         selectedBtn.classList.add("wrong");
     }
+
     Array.from(answerButtons.children).forEach(button => {
         if (button.dataset.correct === "true") {
             button.classList.add("correct");
         }
         button.disabled = true;
     });
+
     nextButton.style.display = "block";
 }
 
 function handleNextButton() {
     currentQuestionIndex++;
-    if (currentQuestionIndex < 10) { // Assuming 10 questions
+    if (currentQuestionIndex < questions.length) {
         showQuestion();
     } else {
         showScore();
@@ -124,20 +93,19 @@ function handleNextButton() {
 
 function showScore() {
     resetState();
-    questionElement.innerHTML = `You scored ${score} out of 10!`;
+    questionElement.innerHTML = `You scored ${score} out of ${questions.length}!`;
     nextButton.innerHTML = "Play Again";
     nextButton.style.display = "block";
 }
 
 nextButton.addEventListener("click", () => {
-    if (currentQuestionIndex < 10) {
+    if (currentQuestionIndex < questions.length) {
         handleNextButton();
     } else {
         startQuiz();
     }
 });
 
-// Utility function to shuffle answers
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
