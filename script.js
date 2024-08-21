@@ -69,7 +69,7 @@ function selectAnswer(e) {
         selectedBtn.classList.add("correct");
         score++;
     } else {
-        selectedBtn.classList.add("wrong");
+        selectedBtn.classList.add("incorrect");
     }
 
     Array.from(answerButtons.children).forEach(button => {
